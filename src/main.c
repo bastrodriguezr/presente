@@ -66,7 +66,9 @@ int main(int argc, char const *argv[]){
         EndDrawing();
 
     }
-    hiscore_update(player_score);
+    // The player hiscore is update if is better than before
+    if (player_score > hiscore) hiscore_update(player_score);
+    
     PlaySound(shot);
     while(IsSoundPlaying(shot));
     UnloadSound(shot);
