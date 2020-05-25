@@ -17,6 +17,8 @@
 #define BULLET_SPEED 16
 #define BULLET_RAD   5
 
+int player_score;
+int hiscore;
 
 // ==== PLAYER DEFINITION
 typedef struct {
@@ -64,6 +66,8 @@ typedef struct {
     int button_state[N_BUTTONS];
     float aim_angle;
 
+    // Score of the player
+    int score;
 } state;
 
 // Creates an empty state, allocating memory for it.
@@ -77,6 +81,9 @@ void state_populate_random(level *lvl, state *sta, int n_enemies);
 
 // Deletes a state and the memory it requires.
 void state_free(state *sta);
+
+// Add score to the player if an enemy is killed
+void kill_score(enemykind enemy_type);
 
 
 

@@ -5,6 +5,7 @@
 #include "level.h"
 #include "draw.h"
 #include "state.h"
+#include "files.h"
 
 int main(int argc, char const *argv[]){
 
@@ -12,8 +13,17 @@ int main(int argc, char const *argv[]){
     const int screen_width = 800;
     const int screen_height = 600;
 
+    player_score = 0;
+    hiscore = get_hiscore();
+
     InitWindow(screen_width,screen_height,"Presente - the game");
     SetTargetFPS(60);
+
+    InitAudioDevice();
+
+    Music music = LoadMusicStream("../music/Background.mp3");
+    Sound shot = LoadSound("../music/Shot.mp3");
+    PlayMusicStream(music);
 
     // Initialize level and fill randomly
     level *lvl = level_new(50,40);
@@ -25,6 +35,8 @@ int main(int argc, char const *argv[]){
 
     // Main loop
     while(!WindowShouldClose()){
+
+        UpdateMusicStream(music);
 
         // Update input depending if keys are pressed or not
         sta->button_state[0] = IsKeyDown(KEY_D);
@@ -48,10 +60,18 @@ int main(int argc, char const *argv[]){
             draw_state(lvl, sta);
 
             DrawText("Presente profe!",190,200,20,LIGHTGRAY);
+            DrawText(FormatText("Score = %d", player_score), 190, 220, 30, BLACK);
+            DrawText(FormatText("Hi-score = %d", hiscore), 190, 250, 20, RED);
 
         EndDrawing();
 
     }
+    hiscore_update(player_score);
+    PlaySound(shot);
+    while(IsSoundPlaying(shot));
+    UnloadSound(shot);
+    UnloadMusicStream(music);
+    CloseAudioDevice();
 
     // Closer window
     CloseWindow();

@@ -1,4 +1,5 @@
 #include "state.h"
+#include "files.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -22,6 +23,17 @@ state *state_new(){
 
     // Retrieve pointer to the state
     return sta;
+}
+
+void kill_score(enemykind enemy_type){
+    switch (enemy_type){
+    case MINION:
+        player_score+=1;
+        break;
+    case BRUTE:
+        player_score+=2;
+        break;
+    }
 }
 
 void state_update(level *lvl, state *sta){
@@ -87,12 +99,18 @@ void state_update(level *lvl, state *sta){
     // == Update entities
     // Update player
     entity_physics(lvl,&sta->pla.ent);
-    if(sta->pla.ent.hp<=0) sta->pla.ent.dead=1;
+    if(sta->pla.ent.hp<=0) {
+        sta->pla.ent.dead=1;
+        if(player_score > hiscore) hiscore_update(player_score);
+    }
     // Update enemies
     for(int i=0;i<sta->n_enemies;i++){
         entity_physics(lvl,&sta->enemies[i].ent);
         // Kill enemy if it has less than 0 HP
-        if(sta->enemies[i].ent.hp<=0) sta->enemies[i].ent.dead = 1;
+        if(sta->enemies[i].ent.hp<=0){
+            sta->enemies[i].ent.dead = 1;
+            kill_score(sta->enemies[i].kind);
+        }
     }
     // Update bullets
     for(int i=0;i<sta->n_bullets;i++){
